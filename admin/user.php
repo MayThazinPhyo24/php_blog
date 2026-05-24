@@ -13,7 +13,7 @@ if($_SESSION['role'] != 1){
 }
 
 if(isset($_POST['search']) && $_POST['search'] != ''){
-    setcookie('search', $_POST['search'], time() + (86400 * 30), "/"); // 86400 = 1 day
+    setcookie('search', $_POST['search'], time() + (86400 * 30), "/");
 }else{
     if(empty($_GET['pageno'])){
         unset($_COOKIE['search']);
@@ -39,11 +39,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="row">
 
       <div class="col-md-12">
-
         <div class="card">
 
           <div class="card-header">
-            <h3 class="card-title">Blog Listing</h3>
+            <h3 class="card-title">User Listing</h3>
           </div>
 
 <?php
@@ -59,14 +58,13 @@ $offset = ($pageno - 1) * $numofRec;
 
 if(empty($_POST['search']) && empty($_COOKIE['search'])){
 
-    $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+    $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC");
     $stmt->execute();
-
     $rawresult = $stmt->fetchAll();
 
     $total_pages = ceil(count($rawresult) / $numofRec);
 
-    $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC LIMIT $offset,$numofRec");
+    $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT $offset,$numofRec");
     $stmt->execute();
 
     $result = $stmt->fetchAll();
@@ -79,8 +77,7 @@ if(empty($_POST['search']) && empty($_COOKIE['search'])){
         $searchKey = $_COOKIE['search'];
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE :search ORDER BY id DESC");
-
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE :search ORDER BY id DESC");
     $stmt->execute([
         ':search' => "%$searchKey%"
     ]);
@@ -89,7 +86,7 @@ if(empty($_POST['search']) && empty($_COOKIE['search'])){
 
     $total_pages = ceil(count($rawresult) / $numofRec);
 
-    $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE :search ORDER BY id DESC LIMIT $offset,$numofRec");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE :search ORDER BY id DESC LIMIT $offset,$numofRec");
 
     $stmt->execute([
         ':search' => "%$searchKey%"
@@ -101,7 +98,7 @@ if(empty($_POST['search']) && empty($_COOKIE['search'])){
 ?>
 
           <div class="card-body">
-            <a href="add.php" type="button" class="btn btn-success">New Blog Post</a>
+            <a href="userAdd.php" type="button" class="btn btn-success">Create User</a>
           </div>
 
           <!-- /.card-header -->
@@ -113,8 +110,8 @@ if(empty($_POST['search']) && empty($_COOKIE['search'])){
               <thead>
                 <tr>
                   <th style="width: 10px">#</th>
-                  <th>Title</th>
-                  <th>Content</th>
+                  <th>Name</th>
+                  <th>Email</th>
                   <th style="width: 40px">Actions</th>
                 </tr>
               </thead>
@@ -132,16 +129,16 @@ if(empty($_POST['search']) && empty($_COOKIE['search'])){
 
                       <td><?php echo $i; ?></td>
 
-                      <td><?php echo $value['title']; ?></td>
+                      <td><?php echo $value['name']; ?></td>
 
-                      <td><?php echo substr($value['content'],0,80); ?></td>
+                      <td><?php echo $value['email']; ?></td>
 
                       <td>
 
                         <div class="btn-group">
 
                           <div class="container">
-                            <a href="edit.php?id=<?php echo $value['id']; ?>"
+                            <a href="userEdit.php?id=<?php echo $value['id']; ?>"
                                type="button"
                                class="btn btn-warning">
                                Edit
@@ -149,7 +146,7 @@ if(empty($_POST['search']) && empty($_COOKIE['search'])){
                           </div>
 
                           <div class="container">
-                            <a href="delete.php?id=<?php echo $value['id']; ?>"
+                            <a href="userDelete.php?id=<?php echo $value['id']; ?>"
                                onclick="return confirm('Are you sure you want to delete this item')"
                                type="button"
                                class="btn btn-danger">

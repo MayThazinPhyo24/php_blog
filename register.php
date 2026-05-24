@@ -1,7 +1,8 @@
 <?php
-    require '../config/config.php';
+    require 'config/config.php';
     session_start();
     if($_POST){
+        $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
 
@@ -9,17 +10,20 @@
         $stmt->bindValue(':email',$email);
         $stmt->execute();
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
         if($user){
-            if($user['password']==$password){
-                $_SESSION['user_id']=$user['id'];
-                $_SESSION['user_name']=$user['name'];
-                $_SESSION['role']=$user['role'];
-                $_SESSION['logged_in']=time();
-                header('Location:index.php');
+            echo "<script>alert('Email Duplicated')</script>";
+        }else{
+            $stmt =  $pdo->prepare("INSERT INTO users(name,email,password)VALUES(:name,:email,:password)");
+            $result = $stmt->execute(
+                array(':name'=>$name,':email'=>$email,':password'=>$password)
+            );
+            if($result){
+            echo "<script>alert('Successfully Register. You can now Login');window.location.href='login.php';</script>";
+                //header('Location:index.php');
             }
         }
-        echo "<script>alert('Incorrect email or password')</script>";
+
+
     }
 ?>
 <!DOCTYPE html>
@@ -27,7 +31,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>BLog | Log in</title>
+  <title>BLog | Register</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -50,9 +54,17 @@
   <!-- /.login-logo -->
   <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+      <p class="login-box-msg">Register new account</p>
 
-      <form action="login.php" method="post">
+      <form action="register.php" method="post">
+      <div class="input-group mb-3">
+          <input type="text" name="name" class="form-control" placeholder="Name">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
@@ -73,8 +85,9 @@
           
           </div>
           <!-- /.col -->
-          <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          <div class="container">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+            <a href="login.php" class="btn btn-default btn-block">LogIn</a>
           </div>
           <!-- /.col -->
         </div>

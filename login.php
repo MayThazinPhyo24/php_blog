@@ -1,5 +1,5 @@
 <?php
-    require '../config/config.php';
+    require 'config/config.php';
     session_start();
     if($_POST){
         $email = $_POST['email'];
@@ -14,7 +14,7 @@
             if($user['password']==$password){
                 $_SESSION['user_id']=$user['id'];
                 $_SESSION['user_name']=$user['name'];
-                $_SESSION['role']=$user['role'];
+                $_SESSION['role'] = 0;
                 $_SESSION['logged_in']=time();
                 header('Location:index.php');
             }
@@ -73,8 +73,9 @@
           
           </div>
           <!-- /.col -->
-          <div class="col-4">
+          <div class="container">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <a href="register.php" class="btn btn-default btn-block">Register</a>
           </div>
           <!-- /.col -->
         </div>
