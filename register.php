@@ -1,30 +1,68 @@
 <?php
-    require 'config/config.php';
-    session_start();
-    if($_POST){
+require 'config/config.php';
+session_start();
+
+if($_POST){
+
+    // Validation
+    if(empty($_POST['name'])){
+        $nameError = "Name cannot be null";
+    }
+
+    if(empty($_POST['email'])){
+        $emailError = "Email cannot be null";
+    }
+
+    if(empty($_POST['password'])){
+        $passwordError = "Password cannot be null";
+    }elseif(strlen($_POST['password']) < 4){
+        $passwordError = "Password should be at least 4 characters";
+    }
+
+    // If no errors
+    if(
+        empty($nameError) &&
+        empty($emailError) &&
+        empty($passwordError)
+    ){
+
         $name = $_POST['name'];
         $email = $_POST['email'];
-        $password = $_POST['password'];
+        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-        $stmt = $pdo->prepare("SELECT* FROM users WHERE email=:email");
-        $stmt->bindValue(':email',$email);
+        // Check duplicate email
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->bindValue(':email', $email);
         $stmt->execute();
+
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
         if($user){
             echo "<script>alert('Email Duplicated')</script>";
         }else{
-            $stmt =  $pdo->prepare("INSERT INTO users(name,email,password)VALUES(:name,:email,:password)");
-            $result = $stmt->execute(
-                array(':name'=>$name,':email'=>$email,':password'=>$password)
-            );
+
+            $stmt = $pdo->prepare("
+                INSERT INTO users(name,email,password)
+                VALUES(:name,:email,:password)
+            ");
+
+            $result = $stmt->execute(array(
+                ':name' => $name,
+                ':email' => $email,
+                ':password' => $password
+            ));
+
             if($result){
-            echo "<script>alert('Successfully Register. You can now Login');window.location.href='login.php';</script>";
-                //header('Location:index.php');
+                echo "<script>
+                        alert('Successfully Register. You can now Login');
+                        window.location.href='login.php';
+                      </script>";
+            }else{
+                echo "Register Failed";
             }
         }
-
-
     }
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -57,14 +95,16 @@
       <p class="login-box-msg">Register new account</p>
 
       <form action="register.php" method="post">
+      <p style='color:red'><?php echo empty($nameError) ? '':$nameError; ?></p>
       <div class="input-group mb-3">
           <input type="text" name="name" class="form-control" placeholder="Name">
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+              <span class="fas fa-user"></span>
             </div>
           </div>
         </div>
+        <p style='color:red'><?php echo empty($emailError) ? '':$emailError; ?></p>
         <div class="input-group mb-3">
           <input type="email" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
@@ -73,6 +113,7 @@
             </div>
           </div>
         </div>
+        <p style='color:red'><?php echo empty($passwordError) ? '' : $passwordError; ?></p>
         <div class="input-group mb-3">
           <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">

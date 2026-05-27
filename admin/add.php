@@ -5,7 +5,18 @@
     header('Location:login.php');
   }
   if($_POST){
-    $file = 'images/'.($_FILES['image']['name']);
+    if(empty($_POST['title']) || empty($_POST['content']) || empty($_FILES['image'])){
+      if(empty($_POST['title'])){
+        $titleError = "Title cannot be null";
+      }
+      if(empty($_POST['content'])){
+        $contentError = "Content cannot be null";
+      }
+      if(empty($_FILES['image'])){
+        $imageError = "Image cannot be null";
+      }
+    }else{
+      $file = 'images/'.($_FILES['image']['name']);
     $imageType = pathinfo($file,PATHINFO_EXTENSION);
     if($imageType != 'png' && $imageType!='jpg' && $imageType!='jpeg'){
         echo "<script>alert('Image must be png,jpg,jpeg')</script>";
@@ -22,6 +33,7 @@
           echo "<script>alert('Successfully Updated');window.location.href='index.php';</script>";
             //header('Location:index.php');
         }
+    }
     }
   }
 ?>
@@ -45,15 +57,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="card-body">
                 <form class="" action="add.php" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="">Title</label>
+                        <label for="">Title</label><p style='color:red'><?php echo empty($titleError) ? '':$titleError; ?></p>
                         <input type="text" class="form-control" name="title" value="" required>
                     </div>
                     <div class="form-group">
-                        <label for="">Content</label><br>
+                        <label for="">Content</label><p style='color:red'><?php echo empty($contentError) ? '':$contentError; ?><br>
                         <textarea class="form-control" name="content" rows="8" cols="80"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="">Image</label><br>
+                        <label for="">Image</label><p style='color:red'><?php echo empty($imageError) ? '':$imageError; ?><br>
                         <input type="file" name="image" value="" required>
                     </div>
                     <div class="form-group">

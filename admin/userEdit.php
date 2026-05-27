@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'] ?? null;
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
+    $password = password_hash($_POST['password'],PASSWORD_DEFAULT) ?? '';
     $role = $_POST['role'] ?? '';
 
     // Only attempt update if we actually have an ID
@@ -72,22 +72,22 @@ $user = $result[0] ?? ['id' => '', 'name' => '', 'email' => '', 'password' => ''
                             <div class="form-group">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($user['id']); ?>">
                                 <label>Name</label>
-                                <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
+                                <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" >
                             </div>
 
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required> 
+                                <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($user['email']); ?>"> 
                             </div>
 
                             <div class="form-group">
                                 <label>Password</label>
-                                <input type="password" class="form-control" name="password" value="<?php echo htmlspecialchars($user['password']); ?>" required>   
+                                <input type="password" class="form-control" name="password" value="<?php echo htmlspecialchars($user['password']); ?>">   
                             </div>
 
                             <div class="form-group">
                                 <label>Role</label>
-                                <select name="role" class="form-control" required>
+                                <select name="role" class="form-control" >
                                     <option value="">Choose Role</option>
                                     <!-- Fix: Correctly handling selected attribute dynamically -->
                                     <option value="admin" <?php echo ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>

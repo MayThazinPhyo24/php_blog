@@ -5,27 +5,45 @@
     header('Location:login.php');
   }
   if($_POST){
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || empty($_POST['role']) || strlen($_POST['password']) <4 ){
+      if(empty($_POST['name'])){
+        $nameError = "Name cannot be null";
+      }
+      if(empty($_POST['email'])){
+        $emailError = "Email cannot be null";
+      }
+      if(empty($_POST['password'])){
+        $passwordError = "Password cannot be null";
+      }
+      if(strlen($_POST['password']) <4 ){
+        $passwordError = "Password should be at least 4 characters";
+      }
+      if(empty($_POST['role'])){
+        $roleError = "Role cannot be null";
+      }
+      }else{
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
+        $role = $_POST['role'];
+        $stmt = $pdo->prepare(
+          "INSERT INTO users(name,email,password,role)
+          VALUES(:name,:email,:password,:role)"
+        );
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $role = $_POST['role'];
+        $result = $stmt->execute(
+          array(
+            ':name'=>$name,
+            ':email'=>$email,
+            ':password'=>$password,
+            ':role'=>$role
+          )
+        );
 
-    $stmt = $pdo->prepare(
-      "INSERT INTO users(name,email,role)
-       VALUES(:name,:email,:role)"
-    );
-
-    $result = $stmt->execute(
-      array(
-        ':name'=>$name,
-        ':email'=>$email,
-        ':role'=>$role
-      )
-    );
-
-    if($result){
-      echo "<script>alert('Successfully Created');window.location.href='user.php';</script>";
-    }
+        if($result){
+          echo "<script>alert('Successfully Created');window.location.href='user.php';</script>";
+        } 
+      } 
 }
   
 ?>
@@ -49,19 +67,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="card-body">
                 <form class="" action="userAdd.php" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="">Name</label>
+                        <label for="">Name</label><p style='color:red'><?php echo empty($nameError) ? '':$nameError; ?></p>
                         <input type="text" class="form-control" name="name" value="" required>
                     </div>
                     <div class="form-group">
-                        <label for="">Email</label><br>
+                        <label for="">Email</label><p style='color:red'><?php echo empty($emailError) ? '':$emailError; ?></p>
                         <input type="email" class="form-control" name="email" value="" required>
                     </div>
                     <div class="form-group">
-                        <label for="">Password</label><br>
+                        <label for="">Password</label><p style='color:red'><?php echo empty($passwordError) ? '':$passwordError; ?></p>
                         <input type="password" class="form-control" name="password" value="" required>
                     </div>
                     <div class="form-group">
-                            <label for="">Role</label>
+                            <label for="">Role</label><p style='color:red'><?php echo empty($roleError) ? '':$roleError; ?></p>
 
                             <select name="role" class="form-control" required>
                                 <option value="">Choose Role</option>

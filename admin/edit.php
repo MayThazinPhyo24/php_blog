@@ -108,7 +108,7 @@ $result = $stmt->fetchAll();
                                     class="form-control"
                                     name="title"
                                     value="<?php echo $result[0]['title'] ?? ''; ?>"
-                                    required>
+                                    >
 
                             </div>
 

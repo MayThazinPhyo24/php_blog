@@ -39,23 +39,28 @@
   $cmtResult = $stmtcmt->fetchAll();
 
   if($_POST){
+    if(empty($_POST['comment'])){
+      if(empty($_POST['comment'])){
+        $commentError = "Comment cannot be null";
+      }
+    }else{
+      $comment = $_POST['comment'];
 
-    $comment = $_POST['comment'];
+      $stmt = $pdo->prepare("INSERT INTO comments (content, author_id, post_id) VALUES (:content, :author_id, :post_id)");
 
-    $stmt = $pdo->prepare("INSERT INTO comments (content, author_id, post_id) VALUES (:content, :author_id, :post_id)");
+      $insertResult = $stmt->execute(
+        array(
+          ':content'=>$comment,
+          ':author_id'=>$_SESSION['user_id'],
+          ':post_id'=>$blogId
+        )
+      );
 
-    $insertResult = $stmt->execute(
-      array(
-        ':content'=>$comment,
-        ':author_id'=>$_SESSION['user_id'],
-        ':post_id'=>$blogId
-      )
-    );
-
-    if($insertResult){
-      header('Location: blogdetail.php?id='.$blogId);
-      exit();
-    }
+      if($insertResult){
+        header('Location: blogdetail.php?id='.$blogId);
+        exit();
+      }
+      }
   }
 ?>
 
@@ -167,7 +172,7 @@
             <form action="" method="post">
 
               <div class="img-push">
-
+              <p style='color:red'><?php echo empty($commentError) ? '':$commentError; ?></p>
                 <input
                   type="text"
                   name="comment"
