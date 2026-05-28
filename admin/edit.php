@@ -1,6 +1,8 @@
 <?php
 session_start();
 require '../config/config.php';
+require '../config/common.php';
+
 
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header('Location:login.php');
@@ -95,7 +97,7 @@ $result = $stmt->fetchAll();
                     <div class="card-body">
 
                         <form action="edit.php?id=<?php echo $getid; ?>" method="post" enctype="multipart/form-data">
-
+                        <input type="hidden" name="_token" value="<?= $_SESSION['_token']; ?>">
                             <div class="form-group">
 
                                 <input type="hidden" name="id"
@@ -107,7 +109,7 @@ $result = $stmt->fetchAll();
                                     type="text"
                                     class="form-control"
                                     name="title"
-                                    value="<?php echo $result[0]['title'] ?? ''; ?>"
+                                    value="<?php echo escape($result[0]['title'] ?? ''); ?>"
                                     >
 
                             </div>
@@ -120,7 +122,7 @@ $result = $stmt->fetchAll();
                                     class="form-control"
                                     name="content"
                                     rows="8"
-                                    cols="80"><?php echo $result[0]['content'] ?? ''; ?></textarea>
+                                    cols="80"><?php echo escape($result[0]['content'] ?? ''); ?></textarea>
 
                             </div>
 
@@ -131,7 +133,7 @@ $result = $stmt->fetchAll();
                                 <?php if (!empty($result[0]['images'])) : ?>
 
                                     <img
-                                        src="images/<?php echo $result[0]['images']; ?>"
+                                        src="images/<?php echo escape( $result[0]['images']); ?>"
                                         width="150"
                                         height="150"
                                         alt=""><br><br>

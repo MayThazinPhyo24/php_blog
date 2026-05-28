@@ -1,6 +1,7 @@
 <?php
 require 'config/config.php';
 session_start();
+require 'config/common.php';
 
 if($_POST){
 
@@ -95,6 +96,7 @@ if($_POST){
       <p class="login-box-msg">Register new account</p>
 
       <form action="register.php" method="post">
+      <input type="hidden" name="_token" value="<?= $_SESSION['_token']; ?>">
       <p style='color:red'><?php echo empty($nameError) ? '':$nameError; ?></p>
       <div class="input-group mb-3">
           <input type="text" name="name" class="form-control" placeholder="Name">

@@ -1,6 +1,7 @@
 <?php
   session_start();
   require 'config/config.php';
+  require 'config/common.php';
 
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
@@ -98,7 +99,7 @@
 
             <div class="card-title" style="text-align:center !important;float:none">
 
-              <h4><?php echo $result[0]['title']?></h4>
+              <h4><?php echo escape($result[0]['title']);?></h4>
 
             </div>
 
@@ -111,7 +112,7 @@
 
             <br>
 
-            <p><?php echo $result[0]['content']?></p>
+            <p><?php echo escape($result[0]['content'])?></p>
 
             <h3>Comments</h3>
             <hr>
@@ -170,7 +171,7 @@
           <div class="card-footer">
 
             <form action="" method="post">
-
+            <input type="hidden" name="_token" value="<?= $_SESSION['_token']; ?>">
               <div class="img-push">
               <p style='color:red'><?php echo empty($commentError) ? '':$commentError; ?></p>
                 <input

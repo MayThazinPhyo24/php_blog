@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../config/config.php';
+require '../config/common.php';
 
 if (empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header('Location:login.php');
@@ -68,7 +69,7 @@ $user = $result[0] ?? ['id' => '', 'name' => '', 'email' => '', 'password' => ''
                     <div class="card-body">
 
                         <form action="userEdit.php?id=<?php echo htmlspecialchars($getid); ?>" method="post" enctype="multipart/form-data">
-
+                        <input type="hidden" name="_token" value="<?= $_SESSION['_token']; ?>">
                             <div class="form-group">
                                 <input type="hidden" name="id" value="<?php echo htmlspecialchars($user['id']); ?>">
                                 <label>Name</label>

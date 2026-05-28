@@ -2,6 +2,8 @@
   session_start();
   require 'config/config.php';
 
+  require 'config/common.php';
+
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     header('Location:login.php');
   }
@@ -104,7 +106,7 @@
 
             <div class="card-header">
               <div class="card-title">
-                <h4><?php echo $value['title'] ?>
+                <h4><?php echo escape($value['title']); ?>
                 </h4>
               </div>
             </div>
