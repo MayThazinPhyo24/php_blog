@@ -37,6 +37,7 @@
 
     <!-- SEARCH FORM -->
     <form class="form-inline ml-3" method="post" action="<?php echo $page == 'index.php' ? 'index.php':'user.php'; ?>">
+    <input type="hidden" name="_token" value="<?= $_SESSION['_token']; ?>">
       <div class="input-group input-group-sm">
         <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
@@ -86,13 +87,13 @@
           
             
           <li class="nav-item">
-            <a href="index.php" class="nav-link">
+            <a href="/admin/index.php" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>Blogs</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="user.php" class="nav-link">
+            <a href="/admin/user.php" class="nav-link">
               <i class="nav-icon fas fa-user"></i>
               <p>Users</p>
             </a>
